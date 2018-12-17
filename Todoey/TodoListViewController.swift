@@ -12,10 +12,14 @@ class TodoListViewController: UITableViewController {
     
     @IBOutlet weak var toDoItem: UILabel!
     var itemArray = ["Find Mike", "Buy Eggos", "Destroy Demogorgon"]
+    let defaults = UserDefaults.standard
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view, typically from a nib.
+        
+        if let items = defaults.array(forKey: "TodoListArray") as? [String] {
+            itemArray = items
+        }
     }
     
     //MARK:- Tableview Datasource Methods
@@ -58,6 +62,7 @@ class TodoListViewController: UITableViewController {
                 return
             }
             self.itemArray.append(textField.text!)
+            self.defaults.set(self.itemArray, forKey: "TodoListArray")
             self.tableView.reloadData()
         })
         let cancelAction = UIAlertAction(title: "Cancel", style: .default, handler: nil)
