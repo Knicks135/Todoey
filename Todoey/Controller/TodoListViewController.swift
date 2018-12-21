@@ -8,8 +8,9 @@
 
 import UIKit
 import RealmSwift
+import SwipeCellKit
 
-class TodoListViewController: UITableViewController {
+class TodoListViewController: SwipeTableViewController{
     
     @IBOutlet weak var searchBar: UISearchBar!
     var selectedCategory: Category? {
@@ -27,7 +28,7 @@ class TodoListViewController: UITableViewController {
     
     //MARK:- Tableview Datasource Methods
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "ToDoItemCell", for: indexPath)
+        let cell = super.tableView(tableView, cellForRowAt: indexPath)
         if let item = todoItems?[indexPath.row] {
             let isChecked: Bool = item.done
             cell.textLabel?.text = item.title
@@ -120,23 +121,18 @@ class TodoListViewController: UITableViewController {
     func loadItems() {
         
         todoItems = selectedCategory?.items.sorted(byKeyPath: "title", ascending: true)
-//        guard let categoryName = selectedCategory?.name else {
-//            return
-//        }
-//        let categoryPredicate = NSPredicate(format: "parentCategory.name MATCHES %@", categoryName)
-//
-//        if let additionalPredicate = predicate {
-//            request.predicate = NSCompoundPredicate(andPredicateWithSubpredicates: [categoryPredicate, additionalPredicate])
-//        } else {
-//            request.predicate = categoryPredicate
-//        }
-//
-//        do {
-//            itemArray = try context.fetch(request)
-//        } catch {
-//            print("Error fetching data from context: \(error)")
-//        }
+
         tableView.reloadData()
+    }
+    
+    override func updateModel(at indexPath: IndexPath) {
+        do {
+            try realm.write {
+                realm.delete(todoItems![indexPath.row])
+            }
+        } catch {
+            print("Error deleting selected category, \(error)")
+        }
     }
 }
 

@@ -8,8 +8,9 @@
 
 import UIKit
 import RealmSwift
+import SwipeCellKit
 
-class CategoryTableViewController: UITableViewController {
+class CategoryTableViewController: SwipeTableViewController {
     
     let realm = try! Realm()
     
@@ -23,7 +24,7 @@ class CategoryTableViewController: UITableViewController {
     //MARK:- Tableview Datasource Methods
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "CategoryCell", for: indexPath)
+        let cell = super.tableView(tableView, cellForRowAt: indexPath)
         let category = categories?[indexPath.row]
         cell.textLabel?.text = category?.name ?? "No Categories added yet"
         
@@ -89,7 +90,15 @@ class CategoryTableViewController: UITableViewController {
         tableView.reloadData()
     }
     
-    
+    override func updateModel(at indexPath: IndexPath) {
+        do {
+            try realm.write {
+                realm.delete(categories![indexPath.row])
+            }
+        } catch {
+            print("Error deleting selected category, \(error)")
+        }
+    }
     
     
 
