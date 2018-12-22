@@ -8,8 +8,10 @@
 
 import Foundation
 import RealmSwift
+import ChameleonFramework
 
 class Category: Object {
     @objc dynamic var name: String = ""
+    @objc dynamic var backgroundColor: String? = UIColor.randomFlat()?.hexValue()
     let items = List<Item>() // set up one-to-many relationship with Item
 }
