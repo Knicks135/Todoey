@@ -21,6 +21,11 @@ class CategoryTableViewController: SwipeTableViewController {
         super.viewDidLoad()
         loadCategories()
         tableView.separatorStyle = .none
+        
+        guard let originalColor = UIColor(hexString: "1D9BF6") else {fatalError()}
+        navigationController?.navigationBar.barTintColor = originalColor
+        navigationController?.navigationBar.tintColor = FlatWhite()
+        navigationController?.navigationBar.largeTitleTextAttributes = [NSAttributedString.Key.foregroundColor: FlatWhite()]
     }
     
     //MARK:- Tableview Datasource Methods
@@ -29,7 +34,10 @@ class CategoryTableViewController: SwipeTableViewController {
         let cell = super.tableView(tableView, cellForRowAt: indexPath)
         let category = categories?[indexPath.row]
         cell.textLabel?.text = category?.name ?? "No Categories added yet"
-        cell.backgroundColor = UIColor.init(hexString: category?.backgroundColor ?? "1D9BF6")
+        
+        guard let categoryColor = UIColor(hexString: category?.backgroundColor) else {fatalError()}
+        cell.backgroundColor = categoryColor 
+        cell.textLabel?.textColor = ContrastColorOf(backgroundColor: categoryColor, returnFlat: true)
         
         return cell
     }
@@ -41,6 +49,7 @@ class CategoryTableViewController: SwipeTableViewController {
     //MARK:- Tableview Delegate Methods
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         performSegue(withIdentifier: "GoToItems", sender: self)
+        tableView.deselectRow(at: indexPath, animated: true)
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
